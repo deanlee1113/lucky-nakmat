@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>자미두수로 보는 출조 운세</title>
+<script src="https://cdn.jsdelivr.net/npm/korean-lunar-calendar/dist/korean-lunar-calendar.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#f4f5f7;color:#222;margin:0;padding:20px;line-height:1.6;font-size:16px}
+.wrap{max-width:560px;margin:0 auto}
+.card{background:#fff;padding:22px;border-radius:14px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+h1{font-size:26px;margin:0 0 6px;color:#2a2d4a;font-weight:700}
+.sub{color:#777;font-size:15px;margin-bottom:20px}
+label{display:block;font-weight:700;font-size:17px;margin-bottom:8px;color:#333}
+.opt{font-size:13px;color:#888;font-weight:400;margin-left:6px}
+input[type=text],input[type=time],input[type=date],select{width:100%;padding:14px 14px;font-size:17px;border:1px solid #dde0e6;border-radius:8px;background:#f9fafc}
+input:focus,select:focus{outline:none;border-color:#5b6cf3;background:#fff}
+.field{margin-bottom:18px}
+.hint{font-size:14px;color:#7c8aa8;margin-top:6px}
+button{width:100%;padding:16px;background:linear-gradient(135deg,#5b6cf3,#8b5cf6);color:#fff;border:none;border-radius:10px;font-size:18px;font-weight:700;cursor:pointer;margin-top:8px}
+button:hover{filter:brightness(1.05)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.rating{font-size:34px;text-align:center;letter-spacing:2px;margin:10px 0}
+.headline{text-align:center;font-size:20px;font-weight:700;color:#2a2d4a;margin-bottom:8px;line-height:1.4}
+.date{text-align:center;color:#888;font-size:15px;margin-bottom:16px}
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.mini{background:#f7f8fb;border-radius:10px;padding:14px}
+.mini .ico{font-size:22px}
+.mini .lbl{font-size:13px;color:#888;margin:4px 0}
+.mini .val{font-size:16px;font-weight:700;color:#2a2d4a;line-height:1.3}
+.mini .desc{font-size:14px;color:#666;margin-top:6px;line-height:1.4}
+.full{grid-column:1/3}
+.section-title{font-size:18px;font-weight:700;margin:16px 0 10px;color:#333;display:flex;align-items:center;gap:6px}
+.event{background:#f7f8fb;border-left:4px solid #5b6cf3;padding:14px 16px;margin-bottom:10px;border-radius:0 8px 8px 0}
+.event.bad{border-left:6px solid #e0526a;background:#fff0f1;box-shadow:0 2px 6px rgba(224,82,106,.15)}
+.event .term{font-size:15px;font-weight:700;color:#5b6cf3}
+.event.bad .term{color:#c8243d;font-size:16px}
+.event .gloss{font-size:16px;color:#222;margin-top:4px;font-weight:500}
+.event.bad .gloss{font-weight:700;color:#1f1f1f}
+.event .advice{font-size:15px;color:#555;margin-top:6px;font-style:italic;line-height:1.5}
+.event .meta{font-size:14px;color:#666;margin-top:8px;line-height:1.7}
+.event.bad .meta{background:#fff;padding:10px 12px;border-radius:6px;color:#444;border-left:3px solid #e0526a}
+.warn-card{border:2px solid #ffa940;background:linear-gradient(135deg,#fff8e8,#fff)}
+.warn-card .section-title{color:#d4691a}
+.warn-item{background:#fff;border-radius:8px;padding:10px 12px;margin-bottom:8px;border-left:3px solid #ffa940}
+.warn-item .lbl{font-size:13px;font-weight:700;color:#d4691a;margin-bottom:2px}
+.warn-item .txt{font-size:14px;color:#333;line-height:1.5}
+.samyung{background:linear-gradient(135deg,#fff7e8,#f3eaff);padding:16px;border-radius:10px}
+.samyung .pct{font-size:26px;font-weight:800;color:#8b5cf6}
+.samyung .lbl{font-size:14px;color:#777}
+.samyung .desc{font-size:15px;color:#333;margin-top:6px;line-height:1.5}
+.unlock-btn{margin-top:12px;width:100%;padding:14px;background:linear-gradient(135deg,#ffa940,#ff7a45);color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.unlock-btn:hover{filter:brightness(1.05)}
+.unlock-btn.unlocked{background:#52c41a}
+.unlock-content{display:none;margin-top:14px;background:linear-gradient(135deg,#fff7e8,#fff);padding:18px;border-radius:12px;border:2px solid #ffa940;box-shadow:0 4px 14px rgba(255,169,64,.18)}
+.unlock-content.show{display:block;animation:unlockGlow 1.4s ease-out}
+@keyframes unlockGlow{0%{box-shadow:0 0 0 6px rgba(255,169,64,.4),0 4px 14px rgba(255,169,64,.18)}100%{box-shadow:0 4px 14px rgba(255,169,64,.18)}}
+.unlock-content::before{content:'📖 잠금 해제된 자세한 풀이';display:block;background:#ffa940;color:#fff;padding:6px 12px;border-radius:6px;font-size:14px;font-weight:700;margin:-18px -18px 14px;border-radius:10px 10px 0 0}
+.unlock-content h4{margin:14px 0 8px;font-size:17px;color:#d4691a;font-weight:700}
+.unlock-content h4:first-of-type{margin-top:0}
+.unlock-content p{font-size:15px;color:#333;line-height:1.7;margin:6px 0}
+.unlock-content p b{color:#c8243d}
+.detail-toggle{margin:0;text-align:center;font-size:16px;color:#5b6cf3;cursor:pointer;font-weight:600;padding:14px 8px;background:#eef3ff;border-radius:10px;border:1.5px solid #c8d4f3;transition:all 0.15s}
+.detail-toggle:hover{background:#dde7fb;border-color:#5b6cf3}
+.detail-toggle:active{transform:scale(0.98)}
+.detail-pane{display:none;background:#fafbfc;padding:14px;border-radius:8px;margin-top:10px;font-size:13px}
+.detail-pane.show{display:block}
+.detail-pane h4{margin:8px 0 5px;font-size:14px;color:#5b6cf3}
+.palace-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;font-size:11px}
+.pcell{background:#fff;border:1px solid #e0e2e8;padding:6px;min-height:65px;border-radius:4px}
+.pcell.life{background:#fff3f3;border-color:#e0526a}
+.pcell.key{background:#eef3ff}
+.pcell .gz{color:#e0526a;font-size:10px}
+.pcell .pn{color:#444;font-size:10px;font-weight:600}
+.pcell .stars{margin-top:3px}
+.pcell .star{display:inline-block;background:#fffbcc;padding:1px 4px;margin:1px 1px 0 0;border-radius:3px;font-size:10px}
+.footer{font-size:13px;color:#9aa3b3;text-align:center;margin-top:24px;padding:14px;line-height:1.6}
+.err{color:#e0526a;font-weight:700;text-align:center;padding:18px;font-size:16px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;background:#fff;padding:14px;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.action-btn{padding:14px 6px;background:#f7f8fb;border:1.5px solid #e0e2e8;border-radius:10px;font-size:15px;font-weight:700;color:#5b6cf3;cursor:pointer;transition:all 0.15s;line-height:1.3}
+.action-btn:hover{background:#eef3ff;border-color:#5b6cf3}
+.action-btn:active{transform:scale(0.97)}
+.action-btn.primary{background:#fff5e6;border-color:#ffa940;color:#d4691a}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:#222;color:#fff;padding:14px 22px;border-radius:10px;font-size:15px;font-weight:600;z-index:9999;opacity:0;pointer-events:none;transition:opacity 0.25s,transform 0.25s;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.ad-wrap{margin:14px 0;text-align:center}
+.ad-wrap:empty{display:none}
+@media(max-width:480px){
+.cards-grid{grid-template-columns:1fr 1fr;gap:8px}
+.mini{padding:12px}
+.mini .val{font-size:15px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card">
+<h1>🎣 자미두수 출조 운세</h1>
+<div class="sub">자미두수 원리로 오늘 낚시 운세를 봅니다 (재미로 보는 운세)</div>
+
+<div class="field">
+<label>생년월일 <span class="opt">양력 8자리</span></label>
+<input type="text" id="solar" placeholder="예: 19900315" maxlength="8" inputmode="numeric">
+</div>
+
+<div class="field">
+<label>출생 시간 <span class="opt">모르면 '모름' 선택</span></label>
+<select id="hour">
+<option value="모름">모름 (정오 가정)</option>
+<option value="자시">자시 (23~01시)</option>
+<option value="축시">축시 (01~03시)</option>
+<option value="인시">인시 (03~05시)</option>
+<option value="묘시">묘시 (05~07시)</option>
+<option value="진시">진시 (07~09시)</option>
+<option value="사시">사시 (09~11시)</option>
+<option value="오시">오시 (11~13시)</option>
+<option value="미시">미시 (13~15시)</option>
+<option value="신시">신시 (15~17시)</option>
+<option value="유시">유시 (17~19시)</option>
+<option value="술시">술시 (19~21시)</option>
+<option value="해시">해시 (21~23시)</option>
+</select>
+</div>
+
+<div class="field">
+<label>낚시 가는 날짜</label>
+<input type="date" id="fdate">
+</div>
+
+<div class="field">
+<label>이름 <span class="opt">선택 — 입력 시 성명학 분석 추가</span></label>
+<input type="text" id="name" placeholder="예: 홍길동">
+</div>
+
+<button onclick="run()">운세 보기</button>
+</div>
+
+<div id="result"></div>
+
+<div class="footer">
+본 콘텐츠는 자미두수 원리를 단순화한 엔터테인먼트입니다.<br>
+정확한 명반 분석은 전문 명리상담사를 찾아주세요.<br><br>
+<span style="font-size:11px;color:#aab">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</span>
+</div>
+</div>
+
+<script>
+// ============ 광고/어필리에이트 설정 ============
+const KAKAO_AD={
+TOP:'DAN-X3JPGSA25TiNXliF',     // 결과상단 320x100
+MIDDLE:'DAN-U41fzANcA5YNfl1w',  // 카드사이 300x250
+BOTTOM:'DAN-R0MKZwvg2Aw6gU2P'   // 결과하단 320x100
+};
+const COUPANG_LINK='https://link.coupang.com/a/eEe4Fh';
+
+function adSlot(unitId,w,h){
+return '<div class="ad-wrap'+(h>=200?' large':'')+'"><ins class="kakao_ad_area" style="display:none;" data-ad-unit="'+unitId+'" data-ad-width="'+w+'" data-ad-height="'+h+'"></ins></div>';
+}
+
+function loadKakaoAds(){
+const old=document.getElementById('kas-script');if(old)old.remove();
+const s=document.createElement('script');
+s.id='kas-script';
+s.src='//t1.kakaocdn.net/kas/static/ba.min.js';
+s.async=true;
+document.body.appendChild(s);
+}
+
+// ============ 상수 ============
+const BR=['자','축','인','묘','진','사','오','미','신','유','술','해'];
+const BR_HAN=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+const STEMS_HAN=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+const HOUR_NAMES=['모름','자시','축시','인시','묘시','진시','사시','오시','미시','신시','유시','술시','해시'];
+const PALACE_NAMES=['명궁','형제궁','부부궁','자녀궁','재백궁','질액궁','천이궁','노복궁','관록궁','전택궁','복덕궁','부모궁'];
+
+const WUHU_DUN={0:2,5:2,1:4,6:4,2:6,7:6,3:8,8:8,4:0,9:0};
+
+const NAYIN=[4,4,6,6,3,3,5,5,4,4,6,6,2,2,5,5,4,4,3,3,2,2,5,5,6,6,3,3,2,2,
+4,4,6,6,3,3,5,5,4,4,6,6,2,2,5,5,4,4,3,3,2,2,5,5,6,6,3,3,2,2];
+
+const ZIWEI_TBL={
+2:[1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,0,0,1,1,2,2,3,3,4],
+3:[4,1,2,5,2,3,6,3,4,7,4,5,8,5,6,9,6,7,10,7,8,11,8,9,0,9,10,1,10,11],
+4:[11,4,1,2,0,5,2,3,1,6,3,4,2,7,4,5,3,8,5,6,4,9,6,7,5,10,7,8,6,11],
+5:[6,11,4,1,2,7,0,5,2,3,8,1,6,3,4,9,2,7,4,5,10,3,8,5,6,11,4,9,6,7],
+6:[9,6,11,4,1,2,10,7,0,5,2,3,11,8,1,6,3,4,0,9,2,7,4,5,1,10,3,8,5,6]
+};
+
+const ZIWEI_GRP=[
+{han:'紫微',el:'土',off:0},{han:'天機',el:'木',off:-1},{han:'太陽',el:'火',off:-3},
+{han:'武曲',el:'金',off:-4},{han:'天同',el:'水',off:-5},{han:'廉貞',el:'火',off:-8}
+];
+const TIANFU_GRP=[
+{han:'天府',el:'土',off:0},{han:'太陰',el:'水',off:1},{han:'貪狼',el:'水',off:2},
+{han:'巨門',el:'水',off:3},{han:'天相',el:'水',off:4},{han:'天梁',el:'土',off:5},
+{han:'七殺',el:'金',off:6},{han:'破軍',el:'水',off:10}
+];
+
+const SAHWA={
+0:{록:'廉貞',권:'破軍',과:'武曲',기:'太陽'},1:{록:'天機',권:'天梁',과:'紫微',기:'太陰'},
+2:{록:'天同',권:'天機',과:null,기:'廉貞'},3:{록:'太陰',권:'天同',과:'天機',기:'巨門'},
+4:{록:'貪狼',권:'太陰',과:null,기:'天機'},5:{록:'武曲',권:'貪狼',과:'天梁',기:null},
+6:{록:'太陽',권:'武曲',과:'太陰',기:'天同'},7:{록:'巨門',권:'太陽',과:null,기:null},
+8:{록:'天梁',권:'紫微',과:'天府',기:'武曲'},9:{록:'破軍',권:'巨門',과:'太陰',기:'貪狼'}
+};
+
+const STAR_OH={'紫微':'土','天機':'木','太陽':'火','武曲':'金','天同':'水','廉貞':'火','天府':'土','太陰':'水','貪狼':'水','巨門':'水','天相':'水','天梁':'土','七殺':'金','破軍':'水'};
+
+const STAR_COLOR={'紫微':'황금색·노랑','天機':'청록·초록','太陽':'빨강·주황','武曲':'흰색·은색','天同':'검정·진남색','廉貞':'빨강·자주','天府':'황토색·베이지','太陰':'검정·차콜','貪狼':'검정·네이비','巨門':'진청·흑청','天相':'회색·실버','天梁':'베이지·카키','七殺':'은색·메탈릭','破軍':'진청·아이보리'};
+
+const STAR_FISH={'紫微':'참돔, 감성돔 (대물)','天機':'갈치, 삼치 (영리한 어종)','太陽':'부시리, 방어 (회유성)','武曲':'농어, 광어 (강인한 어종)','天同':'망둥어, 도다리 (유순한 어종)','廉貞':'우럭, 볼락 (변동성)','天府':'감성돔, 참돔 (안정 대물)','太陰':'갈치, 문어 (야행성)','貪狼':'방어, 부시리 (회유어)','巨門':'농어, 우럭 (입질 빠름)','天相':'도다리, 가자미 (얌전)','天梁':'감성돔, 참돔 (장수성)','七殺':'부시리, 삼치 (공격성)','破軍':'우럭, 광어 (변동)'};
+
+const STAR_TACKLE={'紫微':'정통 찌낚시','天機':'민장대 + 떡밥','太陽':'흘림 찌낚시','武曲':'메탈 지그 (루어)','天同':'처넣기 던질낚시','廉貞':'슬로우 지깅','天府':'원투 (정통 바닥)','太陰':'야간 빛루어','貪狼':'타이라바·인치쿠','巨門':'외줄낚시','天相':'던질낚시','天梁':'갯바위 흘림','七殺':'지깅 (메탈)','破軍':'슬로우·익센트릭 지깅'};
+
+const EL_KE={'木':'金','火':'水','土':'木','金':'火','水':'土'};
+const EL_COLOR={'木':'청록·초록','火':'빨강·주황','土':'황토·베이지','金':'흰색·은색','水':'검정·진남색'};
+
+const DIRS=['정북','북북동','동북동','정동','동남동','남남동','정남','남남서','서남서','정서','서북서','북북서'];
+
+const TIMES=[
+{hour:'자시',short:'23~01시',f:'밤 11시 ~ 새벽 1시'},
+{hour:'축시',short:'01~03시',f:'새벽 1 ~ 3시'},
+{hour:'인시',short:'03~05시',f:'새벽 3 ~ 5시'},
+{hour:'묘시',short:'05~07시',f:'오전 5 ~ 7시'},
+{hour:'진시',short:'07~09시',f:'오전 7 ~ 9시'},
+{hour:'사시',short:'09~11시',f:'오전 9 ~ 11시'},
+{hour:'오시',short:'11~13시',f:'오전 11시 ~ 오후 1시'},
+{hour:'미시',short:'13~15시',f:'오후 1 ~ 3시'},
+{hour:'신시',short:'15~17시',f:'오후 3 ~ 5시'},
+{hour:'유시',short:'17~19시',f:'오후 5 ~ 7시'},
+{hour:'술시',short:'19~21시',f:'저녁 7 ~ 9시'},
+{hour:'해시',short:'21~23시',f:'밤 9 ~ 11시'}
+];
+
+const INITIAL_OH=['목','목','화','화','화','화','수','수','수','금','금','토','금','금','금','목','화','수','토'];
+const SHENG={'목':'화','화':'토','토':'금','금':'수','수':'목'};
+const KE={'목':'토','토':'수','수':'화','화':'금','금':'목'};
+
+// ============ 메시지 풀 ============
+// 헤드라인 별점 5단계 × 5~6개
+const HEADLINES={
+5:['자미가 빛나는 황금 출조일','오늘은 큰 손맛 잡힐 분위기','조황 폭발 예감, 기대해도 좋은 날','별의 기운이 모이는 대박 출조일','오늘 바다는 당신 편','이런 날 안 가면 후회 — 출조 명당','연 중 손꼽힐 만한 출조 운세','대물 만날 가능성이 가장 높은 날'],
+4:['묵직한 손맛 기다리는 날','조황 무난, 기분 좋게 풀릴 분위기','잔잔한 손맛 충분히 즐길 날','자리 잡으면 풀린다, 좋은 날','오늘 출조 가볍게 즐기기 좋은 날','별의 기운이 잔잔하게 흐르는 날','평소보다 한 사이즈 큰 손맛 가능','입질 안정적, 욕심 없이 즐길 만'],
+3:['평이한 흐름, 욕심 내지 않는 날','조황은 그저 그런, 즐기는 마음으로','큰 변동 없는 안정적인 하루','쉬엄쉬엄, 손맛 한두 번이면 만족','오늘은 마음의 출조','평범한 날, 본인 컨디션이 변수','특별한 길흉 없이 잔잔한 하루','자기 페이스대로 가도 OK인 날'],
+2:['조황 약함, 기대치 낮추기','오늘은 가볍게, 무리 금물','입질 약한 날, 인내심이 필요','자리 옮겨가며 탐색하는 게 나음','조과보다 풍경 즐기기 좋은 날','출조보다 채비 정비가 더 보람','짧게 다녀오는 게 좋은 날','한 사이즈만 잡고 철수해도 만족'],
+1:['조황 흉, 출조 자제 권장','오늘은 패스가 답일 수도','별의 기운 약함, 다음 기회로','집에서 채비 정비하는 게 더 보람','오늘은 바다와 거리두기','출조 강행은 후회로 이어질 수 있음','다음 좋은 날 기다리는 게 정답','오늘 무리하면 손해 큰 날']
+};
+
+// 카드 부가 설명 — 결과값별 1개 (variant 추가는 추후)
+const DIR_DESC={
+'정북':'북쪽 바다·먼바다 깊은 자리','북북동':'북동쪽 갯바위·외해 방향','동북동':'동북향 방파제·돌출부','정동':'동향 갯바위·테트라 주변',
+'동남동':'동남쪽 만(灣)·내해','남남동':'남동향 양지바른 자리','정남':'남쪽 따뜻한 수온대','남남서':'남서향 어귀·물길',
+'서남서':'서남쪽 갯골·수심차 큰 곳','정서':'서향 깊은 골·바닥 포인트','서북서':'서북향 어두운 자리·바닥','북북서':'북서쪽 차가운 자리'
+};
+
+const TIME_FRIENDLY={
+'자시':'한밤중 야간낚시 명당 시간대',
+'축시':'심야, 야행성 어종 활성',
+'인시':'동트기 전, 잠 깬 물고기 입질',
+'묘시':'동틀녘 황금 시간',
+'진시':'아침 햇살 받는 활기 시간',
+'사시':'오전 밝은 시간, 활성 좋음',
+'오시':'정오 햇볕 강한 때',
+'미시':'점심 후 잠시 잠잠한 때',
+'신시':'늦은 오후 입질 회복',
+'유시':'해질녘 황혼 명당',
+'술시':'초저녁 야간 진입',
+'해시':'밤 깊어지는 시간'
+};
+
+// 길성 풀이 — 각 별 + "오늘의 길운" 형태
+const POS_GLOSS={
+'紫微':{gloss:'중심별이 좋은 기운 받은 날',adv:'자리 잡으면 묵직한 손맛 가능. 큰 사이즈 노려볼 만.'},
+'天機':{gloss:'재주의 별이 길성 작용',adv:'섬세한 채비·테크닉이 빛나는 날.'},
+'太陽':{gloss:'에너지 별이 환하게 빛남',adv:'적극적 캐스팅이 통하는 날. 회유어 노려보기.'},
+'武曲':{gloss:'추진력 별이 힘 받은 날',adv:'강인한 채비로 큰 어종 노릴 만.'},
+'天同':{gloss:'평화의 별이 따뜻하게 작용',adv:'편안한 손맛 즐기는 날. 무리하지 말기.'},
+'廉貞':{gloss:'변화의 별이 활성화',adv:'포인트 자주 옮기며 탐색이 정답.'},
+'天府':{gloss:'재고의 별이 풍성함 가져옴',adv:'오랜 노림수가 통하는 안정적인 날.'},
+'太陰':{gloss:'달의 별이 부드럽게 작용',adv:'야행성·심해 어종 노려볼 만.'},
+'貪狼':{gloss:'욕망의 별이 길성으로 작용',adv:'적극적으로, 회유어 추적할 타이밍.'},
+'巨門':{gloss:'입질의 별이 활발',adv:'입질 빠른 날. 대응 속도 중요.'},
+'天相':{gloss:'안정의 별이 평온하게 작용',adv:'얌전한 어종, 잔잔한 손맛 즐기기.'},
+'天梁':{gloss:'장수의 별이 안정 길성',adv:'차분하게, 큰 변수 없이 무난한 날.'},
+'七殺':{gloss:'살기의 별이 긍정 발현',adv:'공격적인 액션이 먹히는 날.'},
+'破軍':{gloss:'개척의 별이 변화 길성',adv:'평소 안 가본 자리·새 채비 시도해볼 만.'}
+};
+
+// 흉성 풀이 — 화기 작용
+const NEG_GLOSS={
+'紫微':{gloss:'중심별 기운 막힘',adv:'주도권 못 잡는 날. 무리한 결정 자제.'},
+'天機':{gloss:'재주의 별이 꼬임',adv:'채비 자주 엉킬 수 있음. 단순하게 가기.'},
+'太陽':{gloss:'에너지 별이 약해짐',adv:'본인 컨디션 점검 필수. 햇볕 강하면 쉬기.'},
+'武曲':{gloss:'추진력 별 막힘',adv:'강한 채비도 안 통하는 날. 가볍게.'},
+'天同':{gloss:'평화의 별 흐트러짐',adv:'사소한 짜증 주의. 동행 낚시면 다툼 자제.'},
+'廉貞':{gloss:'변화의 별이 흉으로 작용',adv:'잦은 자리 이동이 오히려 손해.'},
+'天府':{gloss:'재고의 별 빠짐',adv:'장비·채비 분실 주의. 정리 잘 챙기기.'},
+'太陰':{gloss:'달의 별이 어두워짐',adv:'야간·심해 노림 비추천. 햇빛 들 때만.'},
+'貪狼':{gloss:'욕망의 별이 과해짐',adv:'대물 욕심 절제. 잔챙이도 만족하기.'},
+'巨門':{gloss:'입질의 별 막힘',adv:'입질 거의 없을 수 있음. 대화로 시간 보내기.'},
+'天相':{gloss:'안정의 별 흔들림',adv:'채비 자주 끊김 주의. 꼼꼼히 점검.'},
+'天梁':{gloss:'장수의 별 약화',adv:'무리한 원투 자제. 안전 우선.'},
+'七殺':{gloss:'살기의 별이 본인을 향함',adv:'사고·부상 주의. 미끄러운 자리 조심.'},
+'破軍':{gloss:'개척의 별이 파괴로',adv:'장비 파손 주의. 무리한 신상 채비 X.'}
+};
+
+// 도구 주의 — 흉성 별별
+const NEG_TOOL_WARN={
+'紫微':'고가 장비 사용 자제',
+'天機':'합사·채비 점검 자주',
+'太陽':'썬크림·모자 필수',
+'武曲':'단단한 채비 점검',
+'天同':'느긋하게 페이스 조절',
+'廉貞':'무리한 포인트 이동 X',
+'天府':'장비 분실 주의',
+'太陰':'야간 안전 등 필수',
+'貪狼':'대물 채비 욕심 자제',
+'巨門':'대화 자제·집중',
+'天相':'합사 마찰 점검 필수',
+'天梁':'근거리 캐스팅으로',
+'七殺':'미끄럼·낙하 주의',
+'破軍':'신규 장비 신중'
+};
+
+// 잠금 해제 상세 풀이 — 길성 (14주성)
+const POS_DETAIL={
+'紫微':'자미는 자미두수에서 모든 별의 중심이 되는 황제별이에요. 오늘 길성 작용으로 자미의 지도력과 결단력 기운이 강하게 들어옵니다. 자기 판단을 믿고 적극적으로 자리 잡으세요. 큰 사이즈를 노릴 만한 날이고, 정통 채비로 묵직하게 가는 게 정답이에요. 동행 출조라면 오늘 하실 분이 리더 역할 맡으면 분위기 좋게 흘러갑니다.',
+'天機':'천기는 지혜와 재주의 별이에요. 오늘 길성 작용으로 천기의 영민함이 활성화돼서 섬세한 판단·테크닉이 빛나는 날입니다. 채비 미세 조정, 입질 변화 빠른 캐치, 미끼 바꿔보는 시도가 통합니다. 평소 잘 안 쓰던 채비를 시험해볼 만한 좋은 타이밍이에요. 다만 자리 자주 옮기면 오히려 손해니 한 자리에서 변수만 바꿔보세요.',
+'太陽':'태양은 광명과 에너지의 별이에요. 오늘 길성 작용으로 태양의 활기찬 기운이 환하게 빛납니다. 적극적으로 캐스팅 자주, 멀리 던지는 게 효과적이고, 회유성 어종(부시리·방어 등) 노려볼 만한 날이에요. 햇볕 강한 시간대 적극 활용하세요. 양지바른 자리, 햇빛 잘 드는 갯바위가 오늘의 명당입니다.',
+'武曲':'무곡은 재물과 추진력의 별이에요. 오늘 무곡의 강인함이 길성으로 작용하면서 묵직한 한 방을 노릴 수 있는 날입니다. 강인한 채비, 굵은 라인, 메탈 지그 같은 단단한 도구가 빛나요. 농어·광어 같은 강한 어종 노려보세요. 우유부단하면 손해, 결정 빨리 내리고 한 곳에 집중하는 게 정답입니다.',
+'天同':'천동은 평화와 즐거움의 별이에요. 오늘 천동이 길성으로 작용해서 잔잔하고 편안한 손맛 즐기기 좋은 날이 됩니다. 욕심 내지 말고 가벼운 마음으로 즐기는 출조가 어울려요. 망둥어·도다리 같은 유순한 어종이 오늘의 손님입니다. 동행 출조라면 즐거운 분위기 만끽하기 좋은 날이에요.',
+'廉貞':'염정은 변화와 변동의 별이에요. 오늘 염정이 길성으로 작용하면 변화 속에서 기회가 열리는 날입니다. 한 자리에 고집하지 말고 포인트를 자주 옮겨가며 탐색하세요. 우럭·볼락처럼 자리에 따라 입질 차가 큰 어종이 잘 풀립니다. 새 채비, 새 자리 시도가 오히려 정답인 날이에요.',
+'天府':'천부는 재고(財庫)와 안정의 별이에요. 오늘 천부의 풍요로운 기운이 들어와 오랜 노림수가 빛나는 날이 됩니다. 한 자리에 진득하게 머무세요. 원투·바닥 노림처럼 인내심이 통하는 채비가 정답입니다. 큰 변수 없이 안정적인 조황 기대하실 만하고, 감성돔·참돔 같은 대물이 손에 들어올 가능성도 있어요.',
+'太陰':'태음은 달의 별, 내면과 야간의 상징이에요. 오늘 태음이 길성으로 작용하면서 야간 출조나 그림자 진 자리가 명당이 됩니다. 갈치·문어처럼 야행성·심해성 어종 노려볼 타이밍이에요. 야간 빛루어, 어두운 자리에서 오랜 기다림이 빛납니다. 화려한 자리보다 조용한 자리가 정답입니다.',
+'貪狼':'탐랑은 욕망과 활동성의 별이에요. 오늘 탐랑이 길성으로 작용하면서 적극적인 추격·공격이 빛납니다. 회유어(방어·부시리) 적극 추적해볼 만한 날이고, 타이라바·인치쿠 같은 액티브한 채비가 통합니다. 한 자리만 고집 말고 어군 따라 움직이세요. 활발한 활동성이 정답입니다.',
+'巨門':'거문은 입(口舌)의 별이에요. 오늘 거문이 길성으로 작용해서 입질이 활발하고 빠른 날이 됩니다. 입질 빠르니 챔질 타이밍 놓치지 마세요. 농어·우럭처럼 입질 빠른 어종 노려볼 만하고, 외줄낚시·민장대 같은 직접 손맛 채비가 빛납니다. 동행과 대화하느라 한 입질 놓치면 아쉬워요.',
+'天相':'천상은 보좌와 평화의 별이에요. 오늘 천상이 길성으로 작용해서 차분하고 평온한 흐름이 이어집니다. 도다리·가자미처럼 얌전한 어종이 잘 풀리는 날이에요. 던질낚시 같은 정적인 채비가 어울리고, 자리에서 차분히 기다리는 페이스가 정답입니다.',
+'天梁':'천량은 자미두수에서 장수의 별이라 불리는 안정성의 상징이에요. 오늘 길성 작용으로 큰 변동 없이 잔잔한 흐름이 들어옵니다. 욕심 내지 말고 한 자리에 진득하게 머무는 전략이 가장 효과적이에요. 갯바위 흘림처럼 오랜 노림수가 통하는 채비를 추천드립니다. 큰 사이즈는 아니어도 안정적인 손맛 보실 수 있는 날입니다.',
+'七殺':'칠살은 살기와 결단의 별이에요. 오늘 칠살이 길성으로 작용하면서 공격적이고 단호한 액션이 빛나는 날이 됩니다. 부시리·삼치처럼 강한 회유어 노려보세요. 메탈 지그·지깅 같은 액티브한 채비가 정답이에요. 망설이면 어군 놓칩니다. 결단력이 핵심인 날입니다.',
+'破軍':'파군은 변혁의 별이에요. 오늘 파군이 길성으로 작용하면서 변화·새로운 시도가 통하는 날이 됩니다. 평소 안 가본 자리, 새 채비, 새 미끼 시도해볼 타이밍이에요. 슬로우 지깅 같은 익센트릭 채비도 빛납니다. 정형화된 패턴 깨고 새로운 접근이 정답입니다.'
+};
+
+// 잠금 해제 상세 풀이 — 흉성 (14주성)
+const NEG_DETAIL={
+'紫微':'자미가 화기 작용을 받으면 황제별의 권위 있는 기운이 흔들립니다. 오늘은 자기 결정력이 약해지고 우유부단해지기 쉬워요. 큰 결정 미루고, 무리한 자리 이동·고가 장비 사용 자제하세요. 동행 출조라면 다른 분 의견 듣는 자세가 도움됩니다. 컨디션 점검하고 욕심 내지 마세요.',
+'天機':'천기가 화기 작용을 받으면 영민함이 꼬여서 잔실수가 자주 생깁니다. 채비 자주 엉키고 미끼 어이없이 떨어지는 날이에요. 단순한 채비, 검증된 패턴으로 가시고 새로운 시도는 자제하세요. 합사·매듭 점검 자주 하시고, 오늘은 욕심보다 안전한 운영이 정답입니다.',
+'太陽':'태양이 화기 작용을 받으면 에너지가 약해져서 본인 컨디션이 다운됩니다. 햇볕 강한 시간대 무리하면 더 지쳐요. 그늘에서 잠시 쉬는 시간 충분히 가지시고, 썬크림·모자·물 챙기는 거 필수입니다. 적극적인 캐스팅보다 페이스 조절이 핵심인 날입니다.',
+'武曲':'무곡이 화기 작용을 받으면 추진력이 막혀서 강한 채비도 안 통합니다. 굵은 라인·강한 채비 욕심 내지 마시고 가볍게 가세요. 단단한 채비 점검 자주 하시고, 무리한 대물 노림은 오늘 패스가 답입니다. 가볍게 즐기는 마음이 정답이에요.',
+'天同':'천동이 화기 작용을 받으면 평화가 흐트러져서 사소한 짜증이 자주 납니다. 동행 낚시면 작은 일로 다툴 수 있어요. 페이스 천천히, 잔잔한 마음으로 가시고 무리한 대화는 자제. 입질 안 와도 평정심 유지하시고 즐기는 마음으로 출조하세요.',
+'廉貞':'염정이 화기 작용을 받으면 변화가 오히려 흉으로 작용해서 자리를 자주 옮길수록 손해입니다. 한 자리에 진득하게 머무세요. 새 채비 시도도 자제하시고 검증된 익숙한 채비로 가는 게 정답입니다. 욕심 내지 말고 안정적으로 운영하세요.',
+'天府':'천부가 화기 작용을 받으면 재고(財庫)가 빠지는 작용이라 장비·채비 분실 주의 필요해요. 출조 시작 전 장비 체크리스트 한 번 확인하시고, 도구 정리 잘 챙기세요. 비싼 채비·장비 가져가지 마시고 평소 쓰던 거로 단순하게 가세요.',
+'太陰':'태음이 화기 작용을 받으면 어두운 기운이 강해져서 야간·심해 출조 비추천입니다. 햇빛 들 때만 짧게 다녀오세요. 어두운 자리, 그림자 진 곳 피하시고 양지바른 곳에서 가볍게 즐기는 게 정답이에요.',
+'貪狼':'탐랑이 화기 작용을 받으면 욕망이 과해져서 무리한 욕심이 화근이 됩니다. 대물 욕심 절제하시고 잔챙이도 만족하는 마음으로 가세요. 한 자리만 고집 말되, 이동도 신중하게. 욕심부린 캐스팅·욕심부린 채비 다 화근이에요.',
+'巨門':'거문이 화기 작용을 받으면 입(口舌)의 흉성이 발동해서 입질도 막히고 동행 간 말다툼도 잦아집니다. 입질 거의 없을 수 있으니 기대치 낮추시고, 동행 분과 대화는 차분하게. 챔질 타이밍 놓치지 않게 집중력 유지하세요.',
+'天相':'천상이 화기 작용을 받으면 안정성이 흔들려서 채비 자주 끊깁니다. 합사·도래·바늘 점검 꼼꼼히, 매듭도 평소보다 한 번 더 확인하세요. 정적인 채비 위주로 가되 무리하지 마시고, 오늘은 채비 점검이 절반의 성공입니다.',
+'天梁':'천량이 화기 작용을 받으면 장수의 별이 약해져서 무리한 운영이 사고로 이어질 수 있어요. 무리한 원투·먼 거리 캐스팅 자제, 안전 우선이 정답입니다. 미끄러운 갯바위, 위험한 자리 절대 피하시고 안전한 자리에서 가볍게 즐기세요.',
+'七殺':'칠살이 화기 작용을 받으면 살기가 본인을 향해서 사고·부상 위험이 높아집니다. 미끄러운 자리·낚싯바늘·칼 다룰 때 특히 조심하시고, 위험한 갯바위는 오늘 패스. 안전 장비 챙기시고 동행과 함께 출조하시는 걸 추천합니다.',
+'破軍':'파군이 화기 작용을 받으면 파괴의 기운이 강해져서 장비 파손이 자주 발생합니다. 신상 채비·고가 장비 가져가지 마시고 평소 쓰던 검증된 거로 가세요. 무리한 시도, 새로운 패턴 도전 다 오늘은 화근입니다. 단순하게, 안전하게.'
+};
+
+// 별점 5단계 × 5개 한 줄 조언
+const ONE_LINE_ADVICE={
+5:[
+'오늘은 진짜 출조 명당, 욕심 내도 좋습니다 — 큰 한 방 기대하세요',
+'별의 기운이 모이는 날, 평소 노리던 대물 도전해볼 만',
+'오늘 출조는 후회 없을 듯, 적극적으로 가시면 좋아요',
+'바다가 당신 편인 날, 망설이면 손해입니다',
+'★★★★★ 운세는 자주 안 와요, 오늘 만큼은 갈 수 있다면 가세요'
+],
+4:[
+'기분 좋게 풀릴 분위기, 가벼운 마음으로 즐기세요',
+'무난하게 손맛 볼 만한 날, 평소처럼 가도 충분합니다',
+'큰 변수 없이 풀리는 날, 자리만 잘 잡으면 끝',
+'오늘은 욕심 살짝 내도 OK, 다만 안전 우선',
+'★★★★ 운세, 출조 망설이지 마세요'
+],
+3:[
+'평이한 흐름, 욕심 빼고 즐기는 마음이 정답',
+'특별한 변수 없는 날, 자기 페이스대로 가세요',
+'★★★ 운세는 본인 컨디션이 가장 큰 변수',
+'오늘은 결과보다 과정 즐기는 출조',
+'잔잔한 손맛 한두 번이면 만족하셔도 됩니다'
+],
+2:[
+'오늘은 페이스 조절 중요 — 무리하지 마세요',
+'기대치 낮추고 가볍게 다녀오는 게 정답',
+'입질 약한 날, 인내심으로 버티는 출조',
+'자리 자꾸 옮기지 말고 한 곳에서 차분히',
+'★★ 운세, 채비 점검·풍경 즐기기 좋은 날'
+],
+1:[
+'오늘은 출조 자제가 답일 수도 — 채비 정비도 출조의 일부',
+'★ 운세는 무리하면 후회, 다음 기회로',
+'집에서 채비 정비하고 다음 출조 준비하는 게 더 보람',
+'바다와 잠시 거리 두는 날, 안전이 우선',
+'오늘 출조는 패스 권장, 무리하지 마세요'
+]
+};
+
+// 평이한 날 (길흉 둘 다 없음) 메시지
+const NEUTRAL_DAY_MSG=[
+'길흉 작용 없는 평이한 날입니다. 자기 페이스로 즐기시면 됩니다. 큰 변수 없이 잔잔한 흐름이 이어질 거예요. 평소 잘 풀리던 패턴 그대로 가시고, 무리한 시도보다는 익숙한 채비로 안정적으로 운영하세요. 본인 컨디션이 오늘의 가장 큰 변수입니다.',
+'특별한 별의 작용 없이 잔잔한 하루입니다. 강한 길운도 없지만 그만큼 변동성도 적어요. 안정적인 출조 기대하셔도 됩니다. 오늘은 결과보다 과정 즐기는 마음으로 다녀오시고, 평소 가는 자리·평소 쓰는 채비가 가장 안전한 선택입니다.'
+];
+
+// 별점별 일반 주의사항 (사화 흉성 없을 때 사용 — 항상 노출)
+const GENERAL_WARNINGS={
+5:{title:'대박 운세지만 방심 금물',items:[
+{lbl:'⚠️ 안전 우선',txt:'운이 좋은 날일수록 미끄럼·낙하 사고 조심. 갯바위 안전 장비 챙기세요.'},
+{lbl:'🎯 욕심 절제',txt:'대박이라고 무리한 자리 시도 비추천. 검증된 포인트가 정답.'},
+{lbl:'🌬️ 환경 점검',txt:'바람·파도 변화 가능 시간대 미리 일기예보 확인.'}
+]},
+4:{title:'무난한 날도 챙길 건 챙기기',items:[
+{lbl:'⚠️ 안전 점검',txt:'갯바위 이동 시 미끄럼 주의. 신발 그립감 확인 필수.'},
+{lbl:'🎣 채비 점검',txt:'평소 쓰던 채비라도 출조 전 매듭·도래 한 번 확인.'},
+{lbl:'☀️ 날씨 확인',txt:'출조 직전 일기예보 한 번 더 확인. 갑작스런 변화 대비.'}
+]},
+3:{title:'평이한 날의 기본 주의',items:[
+{lbl:'💪 본인 컨디션',txt:'오늘은 본인 컨디션이 가장 큰 변수. 무리하지 말고 페이스 조절.'},
+{lbl:'⚠️ 안전 우선',txt:'미끄러운 자리·위험한 갯바위 피하고 안전한 포인트 선택.'},
+{lbl:'🧰 장비 정리',txt:'출조 전후 장비 정리 꼼꼼히. 도래·바늘 분실 없도록.'}
+]},
+2:{title:'약한 날일수록 더 조심',items:[
+{lbl:'🚫 무리 금지',txt:'입질 약한 날 무리하면 부상·손해. 가벼운 마음으로.'},
+{lbl:'⚠️ 안전 우선',txt:'컨디션 떨어진 날 사고 위험 증가. 위험한 자리 절대 피하기.'},
+{lbl:'⏱️ 짧게 출조',txt:'오래 머물지 말고 짧게 다녀오는 게 정답. 무리한 원투 X.'}
+]},
+1:{title:'오늘은 안전이 우선',items:[
+{lbl:'🚫 출조 자제',txt:'운이 안 좋은 날 무리하면 사고로 이어질 수 있음. 다음 기회 권장.'},
+{lbl:'🏠 집에서 정비',txt:'출조 강행 대신 채비 정비·점검하는 시간으로 활용하세요.'},
+{lbl:'👥 동행 필수',txt:'꼭 출조해야 한다면 단독 X, 동행 필수, 안전 장비 완비.'}
+]}
+};
+
+// 별점별 종합 풀이 (메가 잠금 콘텐츠 평이한 날용 풍부화)
+const NEUTRAL_DETAIL={
+5:'오늘은 강한 별의 작용은 없지만 별점이 매우 좋은 보기 드문 평이한 날입니다. 큰 변동 없이 안정적이면서도 운이 따라주는 흐름이라 평소 노리던 대물 도전해도 좋아요. 다만 운이 좋다고 미끄러운 자리·무리한 캐스팅은 절대 금물. 안전 장비 챙기고 적극적으로 즐기세요.',
+4:'특별한 길흉 작용 없이 안정적인 분위기입니다. 평이하지만 별점이 좋아 무난한 손맛 충분히 즐길 만한 날이에요. 평소 검증된 자리·익숙한 채비로 안정적으로 운영하는 게 정답. 갑작스런 날씨 변화에는 미리 대비하시고, 동행 출조라면 좋은 분위기 만끽하기 좋습니다.',
+3:'길흉 작용 없는 평이한 흐름입니다. 자기 페이스대로 즐기시면 됩니다. 큰 변수 없이 잔잔한 하루가 이어질 거예요. 평소 잘 풀리던 패턴 그대로 가시고, 무리한 시도보다는 익숙한 채비로 안정적으로 운영하세요. 본인 컨디션이 오늘의 가장 큰 변수이니 컨디션 점검하고 출조하시면 좋습니다.',
+2:'별의 기운이 약한 평이한 날입니다. 큰 욕심 빼고 가볍게 다녀오는 게 정답이에요. 입질 약할 수 있으니 인내심 갖고, 자리 자주 옮기지 말고 한 곳에서 차분히 운영하세요. 결과보다는 풍경·바다 즐기는 마음으로 가시는 게 좋습니다. 컨디션 안 좋으면 무리하지 말고 짧게.',
+1:'오늘은 출조 자제가 답일 수 있는 평이하지만 약한 날입니다. 별의 기운 약하고 흉으로 작용할 가능성도 있어요. 무리해서 가시면 후회로 이어질 수 있습니다. 집에서 채비 정비하고 다음 좋은 날 기다리는 게 더 보람일 수 있어요. 꼭 가야 한다면 짧게, 안전 우선으로, 가능하면 동행과 함께.'
+};
+
+// ============ 음력 변환 ============
+function lunarOf(s){
+if(!/^\d{8}$/.test(s))return null;
+const y=+s.substring(0,4),m=+s.substring(4,6),d=+s.substring(6,8);
+try{
+const c=new KoreanLunarCalendar();
+if(!c.setSolarDate(y,m,d))return null;
+const l=c.getLunarCalendar();
+return{year:l.year,month:l.month,day:l.day,leap:!!l.intercalation};
+}catch(e){return null;}
+}
+
+// HH:MM → 시진명
+function hmToHourName(h){
+if(isNaN(h))return null;
+if(h===23||h===0)return'자시';
+if(h<3)return'축시';if(h<5)return'인시';if(h<7)return'묘시';
+if(h<9)return'진시';if(h<11)return'사시';if(h<13)return'오시';
+if(h<15)return'미시';if(h<17)return'신시';if(h<19)return'유시';
+if(h<21)return'술시';return'해시';
+}
+
+// ============ 12궁 + 14주성 ============
+function buildChart(solar,hour){
+const lu=lunarOf(solar);if(!lu)return null;
+let hi=HOUR_NAMES.indexOf(hour);
+const isUnknown=hi<=0;
+if(isUnknown)hi=7;
+const m=lu.leap?lu.month+1:lu.month;
+const lifeIdx=((1+m-hi)%12+12)%12;
+
+// 12궁 배치
+const palaces={};
+for(let i=0;i<12;i++){
+const b=((lifeIdx-i)%12+12)%12;
+palaces[PALACE_NAMES[i]]={branchIdx:b,branchHan:BR_HAN[b]};
+}
+
+// 12궁 천간 (五虎遁)
+const ys=((lu.year-4)%10+10)%10;
+const yb=((lu.year-4)%12+12)%12;
+const yinSt=WUHU_DUN[ys];
+const palaceStems=new Array(12);
+for(let i=0;i<12;i++)palaceStems[i]=((yinSt+i-2)%10+10)%10;
+
+// 명궁 60갑자 → 五行局
+const lifeBranch=palaces['명궁'].branchIdx;
+const lifeStem=palaceStems[lifeBranch];
+let gz=-1;
+for(let n=0;n<60;n++)if(n%10===lifeStem&&n%12===lifeBranch){gz=n;break;}
+const ju=NAYIN[gz];
+
+// 자미 위치
+const ziWei=ZIWEI_TBL[ju][lu.day-1];
+const tianFu=((4-ziWei)%12+12)%12;
+
+// 14주성 배치
+const placement=Array.from({length:12},()=>[]);
+ZIWEI_GRP.forEach(s=>{
+const i=((ziWei+s.off)%12+12)%12;
+placement[i].push({han:s.han,el:s.el});
+});
+TIANFU_GRP.forEach(s=>{
+const i=((tianFu+s.off)%12+12)%12;
+placement[i].push({han:s.han,el:s.el});
+});
+
+// 12궁에 별 + 천간 추가
+Object.entries(palaces).forEach(([n,p])=>{
+p.stem=palaceStems[p.branchIdx];
+p.stemHan=STEMS_HAN[p.stem];
+p.stars=placement[p.branchIdx];
+});
+
+return{
+solar,hour,isUnknown,
+lunar:lu,
+year:{stem:ys,stemHan:STEMS_HAN[ys],branch:yb,branchHan:BR_HAN[yb]},
+ju,juName:{2:'水二局',3:'木三局',4:'金四局',5:'土五局',6:'火六局'}[ju],
+ziWei:BR_HAN[ziWei],tianFu:BR_HAN[tianFu],
+palaces
+};
+}
+
+// ============ 출조일 사화 + 매칭 ============
+function getDayPillar(s){
+const y=+s.substring(0,4),m=+s.substring(4,6),d=+s.substring(6,8);
+const t=new Date(y,m-1,d),b=new Date(1900,0,1);
+const diff=Math.round((t-b)/86400000);
+return{stemIdx:((10+diff)%10+10)%10,branchIdx:((10+diff)%12+12)%12};
+}
+
+const KEYS=['명궁','천이궁','재백궁','복덕궁'];
+const SAHWA_W={'화록':3,'화권':2,'화과':1,'화기':-3};
+
+function matchSahwa(palaces,sahwa){
+const pos=[],neg=[];
+KEYS.forEach(pn=>{
+(palaces[pn].stars||[]).forEach(st=>{
+const isLife=pn==='명궁',m=isLife?1.5:1;
+if(sahwa.록&&st.han===sahwa.록)pos.push({star:st.han,palace:pn,type:'화록',score:SAHWA_W['화록']*m,isLife});
+if(sahwa.권&&st.han===sahwa.권)pos.push({star:st.han,palace:pn,type:'화권',score:SAHWA_W['화권']*m,isLife});
+if(sahwa.과&&st.han===sahwa.과)pos.push({star:st.han,palace:pn,type:'화과',score:SAHWA_W['화과']*m,isLife});
+if(sahwa.기&&st.han===sahwa.기)neg.push({star:st.han,palace:pn,type:'화기',score:SAHWA_W['화기']*m,isLife});
+});
+});
+return{pos,neg};
+}
+
+function rateOf(s){if(s>=2.5)return 5;if(s>=1)return 4;if(s>=-0.5)return 3;if(s>=-2)return 2;return 1;}
+
+// ============ 성명학 ============
+function nameOhang(n){
+if(!n)return null;
+const t=n.trim();if(!t)return null;
+const c=t.charCodeAt(0);
+if(c<0xAC00||c>0xAC00+11171)return null;
+const i=Math.floor((c-0xAC00)/588);
+return{ch:t[0],oh:INITIAL_OH[i]};
+}
+
+function samyungScore(nameOh,palaceOh){
+if(!nameOh||!palaceOh)return null;
+const a=nameOh,b=palaceOh;
+if(a===b)return{score:95,rel:'비화 (같은 오행)',desc:'명궁과 같은 오행 — 자연스럽게 어울리는 기운'};
+if(SHENG[a]===b)return{score:85,rel:'상생',desc:'이름이 명궁을 살려주는 관계 — 좋은 도움 기운'};
+if(SHENG[b]===a)return{score:80,rel:'상생',desc:'명궁이 이름을 받쳐주는 관계 — 안정 기운'};
+if(KE[a]===b)return{score:40,rel:'상극',desc:'이름이 명궁을 누르는 관계 — 살짝 부딪힘'};
+if(KE[b]===a)return{score:50,rel:'상극',desc:'명궁이 이름을 누르는 관계 — 약간의 마찰'};
+return{score:60,rel:'중성',desc:'특별한 작용 없음'};
+}
+
+// ============ 결과 카드 ============
+function getMain(palaces,name,fb){
+const s=palaces[name].stars;
+if(s&&s.length>0)return s[0];
+if(fb){const f=palaces[fb].stars;if(f&&f.length>0)return f[0];}
+return null;
+}
+
+function buildCards(palaces){
+const lifeM=getMain(palaces,'명궁','천이궁');
+const moveM=getMain(palaces,'천이궁','명궁');
+const moveB=palaces['천이궁'].branchIdx;
+const wealthB=palaces['재백궁'].branchIdx;
+const joyB=palaces['복덕궁'].branchIdx;
+
+let depth;
+if([11,0,1].includes(wealthB))depth='깊은 수심 (15m+)';
+else if([2,3,4].includes(wealthB))depth='중층 (5~15m)';
+else if([5,6,7].includes(wealthB))depth='표층 (0~5m)';
+else depth='바닥층';
+
+return{
+direction:DIRS[moveB],
+direction_desc:DIR_DESC[DIRS[moveB]],
+location:DIRS[wealthB]+' / '+depth,
+bestTime:TIMES[joyB],
+bestTime_desc:TIME_FRIENDLY[TIMES[joyB].hour],
+color:lifeM?STAR_COLOR[lifeM.han]:'흰색·은색',
+colorEl:lifeM?STAR_OH[lifeM.han]:'金',
+fish:lifeM?STAR_FISH[lifeM.han]:'잡어 전반',
+tackle:moveM?STAR_TACKLE[moveM.han]:'범용 찌낚시',
+lifeStar:lifeM,
+moveStar:moveM
+};
+}
+
+// ============ 통합 ============
+function fortune(solar,hour,fishingDate,name){
+const ch=buildChart(solar,hour);if(!ch)return{error:'생년월일이나 시간을 확인해주세요'};
+const dp=getDayPillar(fishingDate);
+const sw=SAHWA[dp.stemIdx];
+const{pos,neg}=matchSahwa(ch.palaces,sw);
+let total=0;pos.forEach(p=>total+=p.score);neg.forEach(p=>total+=p.score);
+const rating=rateOf(total);
+const cards=buildCards(ch.palaces);
+const nameOh=nameOhang(name);
+const palaceMainOh=cards.lifeStar?({'土':'토','木':'목','火':'화','金':'금','水':'수'})[cards.lifeStar.el]:null;
+const sm=samyungScore(nameOh?nameOh.oh:null,palaceMainOh);
+
+return{
+chart:ch,
+fishingDate,
+fullName:name||null,
+dayStemHan:STEMS_HAN[dp.stemIdx],
+sahwa:sw,
+pos,neg,total,rating,cards,
+samyung:nameOh?{score:sm.score,rel:sm.rel,desc:sm.desc,nameOh:nameOh.oh,ch:nameOh.ch,palaceOh:palaceMainOh}:null
+};
+}
+
+// ============ 렌더링 ============
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+
+function render(r){
+if(r.error){return'<div class="card err">'+r.error+'</div>';}
+
+const c=r.cards;
+const headline=pick(HEADLINES[r.rating]);
+const stars='⭐️'.repeat(r.rating)+'☆'.repeat(5-r.rating);
+
+let html='';
+
+// 메인 카드
+html+='<div class="card">';
+html+='<div class="date">'+r.fishingDate.substring(0,4)+'-'+r.fishingDate.substring(4,6)+'-'+r.fishingDate.substring(6,8);
+if(r.chart.isUnknown)html+=' <span style="color:#e0a050">(시간 미입력)</span>';
+html+='</div>';
+html+='<div class="rating">'+stars+'</div>';
+html+='<div class="headline">'+headline+'</div>';
+
+// 카드 그리드
+html+='<div class="cards-grid">';
+html+='<div class="mini"><div class="ico">🧭</div><div class="lbl">출조 방향</div><div class="val">'+c.direction+'</div><div class="desc">'+c.direction_desc+'</div></div>';
+html+='<div class="mini"><div class="ico">🎯</div><div class="lbl">공략 위치</div><div class="val">'+c.location+'</div></div>';
+html+='<div class="mini"><div class="ico">⏰</div><div class="lbl">베스트 시간</div><div class="val">'+c.bestTime.f+'</div><div class="desc">'+c.bestTime_desc+'</div></div>';
+html+='<div class="mini"><div class="ico">👕</div><div class="lbl">행운의 색상</div><div class="val">'+c.color+'</div></div>';
+html+='<div class="mini"><div class="ico">🐟</div><div class="lbl">추천 어종</div><div class="val">'+c.fish+'</div></div>';
+html+='<div class="mini"><div class="ico">🎣</div><div class="lbl">추천 채비</div><div class="val">'+c.tackle+'</div></div>';
+html+='</div>';
+html+='</div>';
+
+// 결과 상단 광고 (메인 카드 직후, 320x100)
+html+=adSlot(KAKAO_AD.TOP,320,100);
+
+// 성명학 카드
+if(r.samyung){
+html+='<div class="card">';
+html+='<div class="section-title">🔮 소리오행 궁합</div>';
+html+='<div class="samyung">';
+html+='<div><span class="pct">'+r.samyung.score+'%</span> <span class="lbl">— '+r.samyung.rel+'</span></div>';
+html+='<div class="desc">'+r.samyung.desc+'</div>';
+html+='<div class="lbl" style="margin-top:6px">이름 첫글자 '+r.samyung.ch+'('+r.samyung.nameOh+') ↔ 명궁 ('+r.samyung.palaceOh+')</div>';
+html+='</div>';
+html+='</div>';
+}
+
+// 길성 카드 (잠금 X — 짧은 풀이만 노출)
+if(r.pos.length>0){
+html+='<div class="card">';
+html+='<div class="section-title">⭐ 오늘의 길운</div>';
+r.pos.forEach(p=>{
+const g=POS_GLOSS[p.star];
+if(!g)return;
+html+='<div class="event">';
+html+='<div class="term">'+p.palace+' '+p.type+' ('+p.star+')</div>';
+html+='<div class="gloss">'+g.gloss+'</div>';
+html+='<div class="advice">"'+g.adv+'"</div>';
+html+='</div>';
+});
+html+='</div>';
+}
+
+// 흉성 카드 (사화 흉성 있을 때) — 강한 시각 강조
+if(r.neg.length>0){
+const ke=EL_KE[c.colorEl];
+const avoidColor=ke?EL_COLOR[ke]:null;
+html+='<div class="card">';
+html+='<div class="section-title" style="color:#c8243d">🚨 오늘 꼭 조심할 것</div>';
+r.neg.forEach(n=>{
+const g=NEG_GLOSS[n.star];
+if(!g)return;
+const branchIdx=r.chart.palaces[n.palace].branchIdx;
+const avoidT=TIMES[branchIdx];
+html+='<div class="event bad">';
+html+='<div class="term">'+n.palace+' '+n.type+' ('+n.star+')</div>';
+html+='<div class="gloss">'+g.gloss+'</div>';
+html+='<div class="advice">"'+g.adv+'"</div>';
+html+='<div class="meta">';
+html+='⏰ 피하기 좋은 시간: <b>'+avoidT.f+'</b> ('+avoidT.hour+')<br>';
+if(avoidColor)html+='🎨 피하기 좋은 색상: <b>'+avoidColor+'</b><br>';
+html+='🛠️ 도구 주의: <b>'+NEG_TOOL_WARN[n.star]+'</b>';
+html+='</div>';
+html+='</div>';
+});
+html+='</div>';
+}
+// 흉성 없는 평이한 날: 일반 주의사항은 잠금 안에만 노출 (외부 카드 X)
+
+// 카드 사이 광고 (메가 잠금 카드 직전, 300x250)
+html+=adSlot(KAKAO_AD.MIDDLE,300,250);
+
+// ===== 항상 노출되는 메가 잠금 카드 (광고 매출 100% 확보) =====
+html+='<div class="card">';
+
+// 오늘의 한 줄 평 (호기심 유발 — 잠금 밖에서 종합 멘트만)
+const oneLine=pick(ONE_LINE_ADVICE[r.rating]);
+html+='<div class="section-title">✨ 오늘의 한 줄 평</div>';
+html+='<div style="font-size:17px;color:#1f1f1f;line-height:1.6;font-weight:600;padding:14px 16px;background:linear-gradient(135deg,#eef3ff,#fff);border-radius:10px;border-left:4px solid #5b6cf3;margin-bottom:16px">'+oneLine+'</div>';
+
+// 잠금 호기심 자극 카피
+html+='<div class="section-title" style="margin-top:10px">🚨 오늘 꼭 보고 가세요</div>';
+html+='<div style="font-size:15px;color:#444;line-height:1.6">';
+if(r.neg.length>0){
+html+='오늘 <b>흉성 작용</b>이 있는 날 — 왜 흉인지, 어떻게 피해야 하는지 <b>구체적 풀이</b>가 있습니다.';
+}else if(r.rating>=4){
+html+='오늘 별점이 좋아도 <b>놓치면 안 되는 핵심 포인트</b>가 있습니다. 어떻게 출조하느냐에 따라 결과가 달라져요.';
+}else if(r.rating<=2){
+html+='오늘 별점이 낮은 만큼 <b>꼭 챙겨야 할 회피 포인트</b>가 있습니다. 출조 전 한 번 보고 가시면 헛걸음 막을 수 있어요.';
+}else{
+html+='평이한 별점이지만 <b>오늘만의 핵심 주의사항</b>이 있습니다. 출조 전 1분만 투자하면 결과가 달라집니다.';
+}
+html+='</div>';
+html+='<button class="unlock-btn" id="unlockMega" onclick="unlockDetail(\'mega\')">📖 오늘 운세 상세보기 (광고 보기)</button>';
+html+='<div class="unlock-content" id="megaDetail">';
+if(r.pos.length>0){
+html+='<h4>⭐ 길운 활용법</h4>';
+r.pos.forEach(p=>{
+const detail=POS_DETAIL[p.star];
+if(detail){
+html+='<p><b>'+p.palace+' '+p.type+' ('+p.star+')</b><br>'+detail+'</p>';
+}
+});
+}
+if(r.neg.length>0){
+html+='<h4>⚠️ 흉성 회피법</h4>';
+r.neg.forEach(n=>{
+const detail=NEG_DETAIL[n.star];
+if(detail){
+html+='<p><b>'+n.palace+' '+n.type+' ('+n.star+')</b><br>'+detail+'</p>';
+}
+});
+}
+if(r.pos.length===0&&r.neg.length===0){
+html+='<h4>🌊 평이한 날의 종합 풀이</h4>';
+html+='<p>'+NEUTRAL_DETAIL[r.rating]+'</p>';
+const w2=GENERAL_WARNINGS[r.rating];
+html+='<h4>⚠️ 오늘 꼭 챙겨야 할 주의사항</h4>';
+w2.items.forEach(it=>{
+html+='<p><b>'+it.lbl+'</b><br>'+it.txt+'</p>';
+});
+}
+html+='<h4>💡 오늘의 한 줄 조언</h4>';
+// 위 한 줄 평과 다른 variant 픽
+const advicePool=ONE_LINE_ADVICE[r.rating].filter(a=>a!==oneLine);
+const advice=advicePool.length>0?pick(advicePool):pick(ONE_LINE_ADVICE[r.rating]);
+const greeting=r.fullName?r.fullName+'님':r.chart.year.stemHan+r.chart.year.branchHan+'생 고객님';
+html+='<p><span style="color:#5b6cf3;font-weight:700">'+greeting+',</span> '+advice+'.</p>';
+html+='</div>';
+html+='</div>';
+
+// 결과 하단 광고 (액션 버튼 직전, 320x100)
+html+=adSlot(KAKAO_AD.BOTTOM,320,100);
+
+// 액션 버튼 (4개: 처음부터/날짜만/공유/이미지)
+html+='<div class="actions">';
+html+='<button class="action-btn primary" onclick="tryAgainDate()">📅 날짜만 다시</button>';
+html+='<button class="action-btn" onclick="tryAgainAll()">🔄 처음부터</button>';
+html+='<button class="action-btn" onclick="shareResult()">📤 공유하기</button>';
+html+='<button class="action-btn" onclick="saveAsImage()">💾 이미지 저장</button>';
+html+='</div>';
+
+// 명반 자세히 보기 (마니아용 토글) — 액션 카드와 분리
+html+='<div class="card" style="margin-top:8px">';
+html+='<div class="detail-toggle" onclick="toggleDetail()">🔍 자미두수 명반 자세히 보기 (마니아용)</div>';
+html+='<div class="detail-pane" id="detailPane">';
+html+='<h4>출생 정보</h4>';
+html+='<div>음력: '+r.chart.lunar.year+'-'+r.chart.lunar.month+'-'+r.chart.lunar.day+(r.chart.lunar.leap?' (윤달)':'')+'</div>';
+html+='<div>출생년: '+r.chart.year.stemHan+r.chart.year.branchHan+' / 명궁: '+r.chart.palaces['명궁'].stemHan+r.chart.palaces['명궁'].branchHan+'</div>';
+html+='<div>오행국: '+r.chart.juName+' / 자미: '+r.chart.ziWei+'궁 / 천부: '+r.chart.tianFu+'궁</div>';
+html+='<div>출조일 일진: '+r.dayStemHan+'日</div>';
+html+='<div>당일 사화: 록='+(r.sahwa.록||'(無)')+' / 권='+(r.sahwa.권||'(無)')+' / 과='+(r.sahwa.과||'(無)')+' / 기='+(r.sahwa.기||'(無)')+'</div>';
+html+='<h4>12궁 명반</h4>';
+html+=renderPalaceGrid(r.chart.palaces);
+html+='<div style="margin-top:10px;color:#999;font-size:10px">자미두수 원리를 단순화한 결과입니다. 정확한 명반은 전문 명리상담사에게 문의하세요.</div>';
+html+='</div>';
+html+='</div>';
+
+return html;
+}
+
+function renderPalaceGrid(palaces){
+// 4x4 그리드 (중앙 2x2 비움)
+const POS={5:0,6:1,7:2,8:3,4:4,9:7,3:8,10:11,2:12,1:13,0:14,11:15};
+const cells=new Array(16).fill(null);
+Object.entries(palaces).forEach(([n,p])=>{cells[POS[p.branchIdx]]={name:n,...p};});
+let h='<div class="palace-grid">';
+const KEY=['명궁','천이궁','재백궁','복덕궁'];
+for(let r=0;r<4;r++){
+for(let c=0;c<4;c++){
+const i=r*4+c;
+if(i===5||i===6||i===9||i===10){h+='<div></div>';continue;}
+const cell=cells[i];
+if(!cell){h+='<div class="pcell"></div>';continue;}
+let cls='pcell';
+if(cell.name==='명궁')cls+=' life';
+else if(KEY.includes(cell.name))cls+=' key';
+h+='<div class="'+cls+'">';
+h+='<div class="gz">'+cell.stemHan+cell.branchHan+'</div>';
+h+='<div class="pn">'+cell.name+'</div>';
+h+='<div class="stars">';
+cell.stars.forEach(s=>{h+='<span class="star">'+s.han+'</span>';});
+if(cell.stars.length===0)h+='<span style="color:#bbb;font-size:9px">空</span>';
+h+='</div></div>';
+}
+}
+h+='</div>';
+return h;
+}
+
+window.toggleDetail=function(){
+document.getElementById('detailPane').classList.toggle('show');
+};
+
+// 토스트 알림 — transition 발동을 위해 한 틱 미룸
+function showToast(msg){
+let t=document.getElementById('toast');
+if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t);}
+t.textContent=msg;
+t.classList.remove('show');
+// 한 프레임 미루어 transition 발동
+setTimeout(()=>t.classList.add('show'),20);
+setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// 처음부터 다시 — 모든 입력 초기화
+window.tryAgainAll=function(){
+document.getElementById('result').innerHTML='';
+document.getElementById('solar').value='';
+document.getElementById('hour').value='모름';
+document.getElementById('name').value='';
+const today=new Date();
+document.getElementById('fdate').value=today.toISOString().substring(0,10);
+window.scrollTo({top:0,behavior:'smooth'});
+setTimeout(()=>document.getElementById('solar').focus(),400);
+};
+
+// 날짜만 다시 — 출조 날짜 필드만 비우고 포커스
+window.tryAgainDate=function(){
+document.getElementById('result').innerHTML='';
+const fdate=document.getElementById('fdate');
+fdate.value='';
+window.scrollTo({top:0,behavior:'smooth'});
+setTimeout(()=>{fdate.focus();fdate.click();},400);
+showToast('📅 새 출조 날짜를 선택해주세요');
+};
+
+// 공유하기 (Web Share API → fallback: clipboard)
+window.shareResult=async function(){
+const url=window.location.href;
+const shareData={
+title:'자미두수로 보는 출조 운세',
+text:'자미두수로 오늘 낚시 운세를 봤어요. 같이 보러갈래?',
+url
+};
+if(navigator.share){
+try{await navigator.share(shareData);}catch(e){/* 사용자 취소 */}
+}else{
+try{
+await navigator.clipboard.writeText(url);
+showToast('📋 링크가 복사되었습니다');
+}catch(e){
+showToast('공유 기능을 지원하지 않는 환경입니다');
+}
+}
+};
+
+// 이미지 저장
+window.saveAsImage=async function(){
+if(typeof html2canvas==='undefined'){
+showToast('이미지 저장 기능 로딩 중... 잠시 후 다시 시도');
+return;
+}
+const target=document.getElementById('result');
+if(!target||!target.children.length){
+showToast('저장할 결과가 없습니다');
+return;
+}
+showToast('이미지 생성 중...');
+try{
+const canvas=await html2canvas(target,{
+backgroundColor:'#f4f5f7',
+scale:2,
+useCORS:true,
+logging:false
+});
+const link=document.createElement('a');
+const today=new Date().toISOString().substring(0,10);
+link.download='자미두수_출조운세_'+today+'.png';
+link.href=canvas.toDataURL('image/png');
+link.click();
+setTimeout(()=>showToast('💾 이미지가 저장되었습니다'),300);
+}catch(e){
+showToast('이미지 저장 실패: '+e.message);
+}
+};
+
+// 쿠팡 다녀오기 + 즉시 잠금 해제 (모바일/인앱 브라우저 호환)
+window.unlockDetail=function(type){
+const btnMap={mega:['unlockMega','megaDetail']};
+const[btnId,detailId]=btnMap[type];
+const btn=document.getElementById(btnId);
+const detail=document.getElementById(detailId);
+
+// 쿠팡 새 창 시도 (성공/실패 무관)
+window.open(COUPANG_LINK,'_blank','noopener,noreferrer');
+
+// 즉시 잠금 해제 — 쿠팡 클릭 = 매출이라 시청 시간 강제 의미 없음
+detail.classList.add('show');
+btn.textContent='✓ 잠금 해제됨';
+btn.classList.add('unlocked');
+btn.disabled=true;
+showToast('🎉 자세히 풀이가 열렸습니다');
+setTimeout(()=>detail.scrollIntoView({behavior:'smooth',block:'start'}),300);
+};
+
+// ============ 이벤트 ============
+function fmtDate(d){return d.replace(/-/g,'');}
+
+// 오늘 날짜 기본값
+const today=new Date();
+document.getElementById('fdate').value=today.toISOString().substring(0,10);
+
+window.run=function(){
+const solar=document.getElementById('solar').value.trim();
+const hour=document.getElementById('hour').value;
+const fdate=document.getElementById('fdate').value;
+const name=document.getElementById('name').value.trim();
+
+if(!solar||!/^\d{8}$/.test(solar)){
+document.getElementById('result').innerHTML='<div class="card err">생년월일을 8자리 숫자로 입력해주세요 (예: 19900315)</div>';return;
+}
+if(!fdate){
+document.getElementById('result').innerHTML='<div class="card err">낚시 가는 날짜를 선택해주세요</div>';return;
+}
+
+const r=fortune(solar,hour,fmtDate(fdate),name);
+document.getElementById('result').innerHTML=render(r);
+window.scrollTo({top:document.getElementById('result').offsetTop-20,behavior:'smooth'});
+// 결과 렌더링 후 카카오 광고 라이브러리 호출 (새로 박힌 ins 영역 인식용)
+setTimeout(loadKakaoAds,100);
+};
+</script>
+</body>
+</html>
