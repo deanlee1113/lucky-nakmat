@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>자미두수로 보는 출조 운세</title>
+<meta name="google-site-verification" content="r8hM0zruzCzWR9_OF7tToXrW92XxfpTbhs2m15LD3cs" />
 <meta name="google-site-verification" content="P-LK68R9zFY6J307IyFkOxe31Cx4Y7j3ntMkVecC9Lg" />
 <script src="https://cdn.jsdelivr.net/npm/korean-lunar-calendar/dist/korean-lunar-calendar.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -92,6 +93,9 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .cards-grid{grid-template-columns:1fr 1fr;gap:8px}
 .mini{padding:12px}
 .mini .val{font-size:15px}
+input[type=text],input[type=time],input[type=date],select{padding:12px 10px;font-size:16px;max-width:100%;min-width:0}
+.field{min-width:0}
+.card{overflow:hidden}
 }
 </style>
 </head>
@@ -212,6 +216,9 @@ const STAR_OH={'紫微':'土','天機':'木','太陽':'火','武曲':'金','天�
 const STAR_COLOR={'紫微':'황금색·노랑','天機':'청록·초록','太陽':'빨강·주황','武曲':'흰색·은색','天同':'검정·진남색','廉貞':'빨강·자주','天府':'황토색·베이지','太陰':'검정·차콜','貪狼':'검정·네이비','巨門':'진청·흑청','天相':'회색·실버','天梁':'베이지·카키','七殺':'은색·메탈릭','破軍':'진청·아이보리'};
 
 const STAR_FISH={'紫微':'참돔, 감성돔 (대물)','天機':'갈치, 삼치 (영리한 어종)','太陽':'부시리, 방어 (회유성)','武曲':'농어, 광어 (강인한 어종)','天同':'망둥어, 도다리 (유순한 어종)','廉貞':'우럭, 볼락 (변동성)','天府':'감성돔, 참돔 (안정 대물)','太陰':'갈치, 문어 (야행성)','貪狼':'방어, 부시리 (회유어)','巨門':'농어, 우럭 (입질 빠름)','天相':'도다리, 가자미 (얌전)','天梁':'감성돔, 참돔 (장수성)','七殺':'부시리, 삼치 (공격성)','破軍':'우럭, 광어 (변동)'};
+
+// 출조일 일진 지지(子=0~亥=11) → 추천 어종 (날짜별로 변동)
+const BRANCH_FISH=['갈치, 문어 (야행성)','우럭, 볼락 (바닥층)','농어, 학공치 (활성)','도다리, 가자미 (얕은 곳)','망둥어, 숭어 (얕은 자리)','감성돔, 참돔 (대물 노림)','부시리, 방어 (회유 활발)','갈치, 삼치 (회유성)','문어, 주꾸미 (시즌)','광어, 양태 (바닥)','우럭, 노래미 (변동)','대구, 망상어 (깊은 수심)'];
 
 const STAR_TACKLE={'紫微':'정통 찌낚시','天機':'민장대 + 떡밥','太陽':'흘림 찌낚시','武曲':'메탈 지그 (루어)','天同':'처넣기 던질낚시','廉貞':'슬로우 지깅','天府':'원투 (정통 바닥)','太陰':'야간 빛루어','貪狼':'타이라바·인치쿠','巨門':'외줄낚시','天相':'던질낚시','天梁':'갯바위 흘림','七殺':'지깅 (메탈)','破軍':'슬로우·익센트릭 지깅'};
 
@@ -584,7 +591,7 @@ if(fb){const f=palaces[fb].stars;if(f&&f.length>0)return f[0];}
 return null;
 }
 
-function buildCards(palaces){
+function buildCards(palaces,fishingBranchIdx){
 const lifeM=getMain(palaces,'명궁','천이궁');
 const moveM=getMain(palaces,'천이궁','명궁');
 const moveB=palaces['천이궁'].branchIdx;
@@ -605,7 +612,7 @@ bestTime:TIMES[joyB],
 bestTime_desc:TIME_FRIENDLY[TIMES[joyB].hour],
 color:lifeM?STAR_COLOR[lifeM.han]:'흰색·은색',
 colorEl:lifeM?STAR_OH[lifeM.han]:'金',
-fish:lifeM?STAR_FISH[lifeM.han]:'잡어 전반',
+fish:BRANCH_FISH[fishingBranchIdx],
 tackle:moveM?STAR_TACKLE[moveM.han]:'범용 찌낚시',
 lifeStar:lifeM,
 moveStar:moveM
@@ -620,7 +627,7 @@ const sw=SAHWA[dp.stemIdx];
 const{pos,neg}=matchSahwa(ch.palaces,sw);
 let total=0;pos.forEach(p=>total+=p.score);neg.forEach(p=>total+=p.score);
 const rating=rateOf(total);
-const cards=buildCards(ch.palaces);
+const cards=buildCards(ch.palaces,dp.branchIdx);
 const nameOh=nameOhang(name);
 const palaceMainOh=cards.lifeStar?({'土':'토','木':'목','火':'화','金':'금','水':'수'})[cards.lifeStar.el]:null;
 const sm=samyungScore(nameOh?nameOh.oh:null,palaceMainOh);
@@ -902,7 +909,7 @@ showToast('공유 기능을 지원하지 않는 환경입니다');
 }
 };
 
-// 이미지 저장
+// 이미지 저장 (광고/액션버튼/명반 토글 카드 일시 숨김)
 window.saveAsImage=async function(){
 if(typeof html2canvas==='undefined'){
 showToast('이미지 저장 기능 로딩 중... 잠시 후 다시 시도');
@@ -914,6 +921,23 @@ showToast('저장할 결과가 없습니다');
 return;
 }
 showToast('이미지 생성 중...');
+
+// 캡처에서 제외할 요소들: 광고 + 액션버튼 + 명반 자세히 보기 토글
+const hideSelectors=['.ad-wrap','.actions','.detail-toggle'];
+const hidden=[];
+hideSelectors.forEach(sel=>{
+target.querySelectorAll(sel).forEach(el=>{
+hidden.push({el,disp:el.style.display});
+el.style.display='none';
+});
+});
+// 명반 자세히 보기 카드 자체도 (토글이 그 안에 있어서 빈 카드만 남는 걸 방지)
+const detailCard=document.getElementById('detailPane');
+if(detailCard&&!detailCard.classList.contains('show')){
+const card=detailCard.closest('.card');
+if(card){hidden.push({el:card,disp:card.style.display});card.style.display='none';}
+}
+
 try{
 const canvas=await html2canvas(target,{
 backgroundColor:'#f4f5f7',
@@ -921,6 +945,8 @@ scale:2,
 useCORS:true,
 logging:false
 });
+// 복원
+hidden.forEach(({el,disp})=>{el.style.display=disp;});
 const link=document.createElement('a');
 const today=new Date().toISOString().substring(0,10);
 link.download='자미두수_출조운세_'+today+'.png';
@@ -928,6 +954,8 @@ link.href=canvas.toDataURL('image/png');
 link.click();
 setTimeout(()=>showToast('💾 이미지가 저장되었습니다'),300);
 }catch(e){
+// 에러 시도 복원
+hidden.forEach(({el,disp})=>{el.style.display=disp;});
 showToast('이미지 저장 실패: '+e.message);
 }
 };
@@ -939,10 +967,21 @@ const[btnId,detailId]=btnMap[type];
 const btn=document.getElementById(btnId);
 const detail=document.getElementById(detailId);
 
-// 쿠팡 새 창 시도 (성공/실패 무관)
-window.open(COUPANG_LINK,'_blank','noopener,noreferrer');
+// 쿠팡 새 창 — a 태그 click() 방식 (모바일/인앱 브라우저 호환성)
+try{
+const a=document.createElement('a');
+a.href=COUPANG_LINK;
+a.target='_blank';
+a.rel='noopener';
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+}catch(e){
+window.location.href=COUPANG_LINK;
+return;
+}
 
-// 즉시 잠금 해제 — 쿠팡 클릭 = 매출이라 시청 시간 강제 의미 없음
+// 즉시 잠금 해제
 detail.classList.add('show');
 btn.textContent='✓ 잠금 해제됨';
 btn.classList.add('unlocked');
@@ -977,6 +1016,63 @@ window.scrollTo({top:document.getElementById('result').offsetTop-20,behavior:'sm
 // 결과 렌더링 후 카카오 광고 라이브러리 호출 (새로 박힌 ins 영역 인식용)
 setTimeout(loadKakaoAds,100);
 };
+</script>
+
+<!-- Firebase 방문자 카운터 -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDhV9Fp7GkfBAgYAAG5zVnOdapDgzyjWAQ",
+  authDomain: "fishing-cam.firebaseapp.com",
+  databaseURL: "https://fishing-cam-default-rtdb.firebaseio.com",
+  projectId: "fishing-cam",
+  storageBucket: "fishing-cam.firebasestorage.app",
+  messagingSenderId: "864488079860",
+  appId: "1:864488079860:web:2d808ab89e64bb8b7b79a1"
+};
+
+const app = initializeApp(firebaseConfig, 'fortune');
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+const nowKST = new Date(Date.now() + 9*60*60*1000);
+const todayKey = nowKST.toISOString().slice(0,10).replace(/-/g,'');
+const visitorRef = ref(db, 'visitors_fortune/' + todayKey);
+const visitedKey = 'visited_fortune_' + todayKey;
+
+// 기기 고유 ID (영구 보존, 낚시캠과 동일한 ID 공유)
+let deviceId = localStorage.getItem('nf_device_id');
+if(!deviceId){
+  deviceId = 'dev_' + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+  localStorage.setItem('nf_device_id', deviceId);
+}
+
+signInAnonymously(auth).then(()=>{
+  if(!localStorage.getItem(visitedKey)){
+    localStorage.setItem(visitedKey, '1');
+
+    // 일별 카운터
+    get(visitorRef).then(snap=>{
+      set(visitorRef, (snap.val()||0)+1).catch(()=>{});
+    });
+
+    // 세션 추적
+    const sessRef = ref(db, 'sessions_fortune/' + deviceId);
+    get(sessRef).then(snap=>{
+      const prev = snap.val() || {};
+      const visitCount = (prev.visitCount||0) + 1;
+      set(sessRef, {
+        firstVisit: prev.firstVisit || todayKey,
+        lastVisit: todayKey,
+        visitCount,
+        dates: { ...(prev.dates||{}), [todayKey]: true }
+      }).catch(()=>{});
+    }).catch(()=>{});
+  }
+}).catch(()=>{});
 </script>
 </body>
 </html>
